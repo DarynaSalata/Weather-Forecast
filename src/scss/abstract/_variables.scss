@@ -1,0 +1,58 @@
+$font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+/*Color palette*/
+$color-accent: #003D9B;
+$color-accent-dark: #002A6B;
+$color-accent-light: #4D96FF;
+
+/*LIGHT MODE by default*/
+$bg-main: #FAF9FF;
+$bg-content: #FFFFFF;
+$text-main: #051A3E;
+$text-muted: #434654;
+$text-hint: #737685;
+$card-border: #C3C6D6;
+$border: rgba(0, 0, 0, 0.08);
+$active-list-item-bg: #EDF2FF;
+
+/*BODY DARK MODE*/
+
+$d-bg-main: #171723;
+$d-bg-content: #131318;
+$d-text-main: #F5F5F7;
+$d-text-muted: #A0A5B5;
+$d-text-hint: #A0A5B5;
+$d-card-border: #3A3D46;
+$d-border: rgba(255, 255, 255, 0.1);
+$d-active-list-item-bg: #2A2D36;
+
+:root {
+  --bg-main: #{$bg-main};
+  --bg-content: #{$bg-content};
+  --text-main: #{$text-main};
+  --text-muted: #{$text-muted};
+  --border-color: #{$border};
+  --card-border: #{$card-border};
+  --text-hint: #{$text-hint};
+  --active-list-item-bg: #{$active-list-item-bg};
+}
+
+.dark-mode {
+  --bg-main: #{$d-bg-main};
+  --bg-content: #{$d-bg-content};
+  --text-main: #{$d-text-main};
+  --text-muted: #{$d-text-muted};
+  --border-color: #{$d-border};
+  --card-border: #{$d-card-border};
+  --text-hint: #{$d-text-hint};
+  --active-list-item-bg: #{$d-active-list-item-bg};
+}
+
+
+@mixin tablet {
+  @media (min-width: 576px) { @content; }
+}
+
+@mixin desktop {
+  @media (min-width: 993px) { @content; }
+}

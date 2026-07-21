@@ -1,0 +1,230 @@
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+  gap: 16px;
+  justify-content: center;
+  margin-top: 16px;
+
+  @include desktop {
+    gap: 24px;
+    justify-content: flex-start;
+    margin-top: 24px;
+  }
+}
+
+.weather-card {
+  background: var(--bg-content);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 220px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+  max-width: 350px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  @include desktop {
+    padding: 24px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+    padding-right: 32px;
+  }
+
+  &__title-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__city-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include desktop {
+      font-size: 22px;
+    }
+  }
+
+  &__country-name {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__icon-box {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  &__temp {
+    font-family: $font-main;
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 32px;
+    margin: 12px 0 0 0;
+
+    @include desktop {
+      font-size: 36px;
+    }
+  }
+
+  &__separator {
+    border: none;
+    height: 1px;
+    background-color: var(--card-border);
+    margin: 16px 0;
+    width: 100%;
+  }
+
+  &__coords {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    span {
+      margin-right: 10px;
+    }
+
+    &-icon {
+      width: 16px;
+      height: 16px;
+
+      .dark-mode & {
+        filter: invert(0.6) brightness(1.5);
+      }
+    }
+
+    &-lat,
+    &-lon {
+      font-family: $font-main;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+  }
+
+  &__details {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: auto;
+    gap: 16px;
+
+    .wind-container,
+    .humidity-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    &-humidity-icon {
+      width: 16px;
+      height: 16px;
+
+      .dark-mode & {
+        filter: invert(0.6) brightness(1.5);
+      }
+    }
+
+    &-humidity-value,
+    &-wind-speed {
+      font-family: $font-main;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    &-wind-arrow {
+      transition: transform 0.4s ease;
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      line-height: 1;
+      text-align: center;
+    }
+  }
+
+  &__close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+
+    opacity: 1;
+    visibility: visible;
+    background-color: var(--active-list-item-bg);
+    color: var(--text-muted);
+    transition: all 0.2s ease-in-out;
+
+    .dark-mode & {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    @include desktop {
+      top: 12px;
+      right: 12px;
+      opacity: 0;
+      visibility: hidden;
+      background-color: var(--bg-content);
+
+      &:hover {
+        background-color: var(--text-main);
+        color: var(--bg-content);
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .dark-mode & {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+
+        &:hover {
+          background-color: $color-accent-light;
+          color: var(--bg-content);
+        }
+      }
+    }
+  }
+
+  @include desktop {
+    &:hover &__close-btn {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
