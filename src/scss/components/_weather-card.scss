@@ -1,15 +1,10 @@
 .forecast-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 16px;
+  width: 100%;
   justify-content: center;
   margin-top: 16px;
-
-  @include desktop {
-    gap: 24px;
-    justify-content: flex-start;
-    margin-top: 24px;
-  }
 }
 
 .weather-card {
@@ -17,22 +12,30 @@
   border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: 20px;
-  min-height: 220px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
-  max-width: 350px;
   width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  min-width: 0;
   position: relative;
+  
   display: flex;
   flex-direction: column;
+  justify-content: space-between; 
+  min-height: 240px;
 
-  @include desktop {
-    padding: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
   }
 
   &__header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center; 
     gap: 16px;
     width: 100%;
     padding-right: 32px;
@@ -71,45 +74,39 @@
 
   &__icon-box {
     flex-shrink: 0;
-    width: 64px;
-    height: 64px;
+    width: 56px; 
+    height: 56px;
 
     img {
       width: 100%;
       height: 100%;
       display: block;
+      object-fit: contain; 
     }
   }
 
   &__temp {
     font-family: $font-main;
     font-weight: 700;
-    line-height: 1.2;
-    font-size: 32px;
-    margin: 12px 0 0 0;
-
-    @include desktop {
-      font-size: 36px;
-    }
+    line-height: 1;
+    font-size: 42px; 
+    margin: 0; 
+    text-align: left;
   }
 
   &__separator {
     border: none;
     height: 1px;
     background-color: var(--card-border);
-    margin: 16px 0;
+    margin: 0;
     width: 100%;
   }
 
   &__coords {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 8px;
-    margin-bottom: 12px;
-
-    span {
-      margin-right: 10px;
-    }
 
     &-icon {
       width: 16px;
@@ -123,24 +120,24 @@
     &-lat,
     &-lon {
       font-family: $font-main;
-      font-size: 11px;
-      font-weight: 400;
+      font-size: 12px;
+      font-weight: 500;
       color: var(--text-muted);
     }
   }
 
   &__details {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; 
     align-items: center;
-    margin-top: auto;
-    gap: 16px;
+    width: 100%;
 
     .wind-container,
     .humidity-container {
       display: flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap; 
     }
 
     &-humidity-icon {
@@ -156,7 +153,7 @@
     &-wind-speed {
       font-family: $font-main;
       font-size: 11px;
-      font-weight: 400;
+      font-weight: 600;
       color: var(--text-muted);
     }
 
@@ -164,9 +161,9 @@
       transition: transform 0.4s ease;
       width: 16px;
       height: 16px;
-      display: inline-block;
-      line-height: 1;
-      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -174,11 +171,11 @@
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: none;
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
