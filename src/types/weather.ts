@@ -14,6 +14,8 @@ export interface CurrentWeather {
     condition: WeatherCondition;
     feelslike_c: number;
     pressure_mb: number;
+    cloud: number;
+    uv: number;
 }
 
 export interface LocationData {

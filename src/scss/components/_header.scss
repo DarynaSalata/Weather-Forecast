@@ -14,21 +14,33 @@
   &__logo {
     display: flex;
     align-items: center;
+    flex: 1;
+    min-width: 0;
+
     &-link {
-      width: 40px;
+      display: inline-flex;
+      max-width: 100%;
       height: 40px;
     }
-  }
+
+    img {
+        max-width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
 
   &__right {
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-shrink: 0;
   }
 
   &__theme-switcher {
     height: 34px;
     width: 40px;
+
     &-link {
       background: none;
       border: none;
@@ -39,44 +51,6 @@
   }
 }
 
-.button-burger {
-  display: none; // hide on desktop
-  background: none;
-  border: none;
-  width: 32px;
-  height: 32px;
-  position: relative;
-  z-index: 1001; // higher than overlay of sidebar
-  cursor: pointer;
-  padding: 0;
-
-  &__line {
-    position: absolute;
-    left: 4px;
-    width: 24px;
-    height: 2px;
-    background-color: var(--text-main);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-
-    &:nth-child(1) { top: 9px; }
-    &:nth-child(2) { top: 16px; }
-    &:nth-child(3) { top: 23px; }
-  }
-
-  @include tablet {
-    display: block;
-  }
-
-  &--active {
-    .button-burger__line {
-      &:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-      &:nth-child(2) { opacity: 0; }
-      &:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    }
-  }
-}
-
-/*DARK MODE*/
 .dark-mode {
   .header__logo, .header__logo-link {
     img {

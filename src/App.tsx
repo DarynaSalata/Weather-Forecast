@@ -1,122 +1,150 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { Header } from './components/Header/Header';
+import { Sidebar } from './components/Sidebar/Sidebar';
+import { WeatherCard } from './components/WeatherCard/WeatherCard';
+import { Loader } from './components/Loader/Loader';
+import { ErrorMessage } from './components/ErrorMessage/ErrorMessage';
+import { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
+import { fetchWeather } from './api/apiGetWeather';
+import { SearchBox } from './components/SearchBox/SearchBox';
+import type { WeatherData } from './types/weather';
+import './scss/main.scss';
 
-function App() {
-  const [count, setCount] = useState(0)
+const LOCAL_STORAGE_KEY = 'weather_forecast_cities';
+
+export function App() {
+  const [weatherList, setWeatherList] = useState<WeatherData[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse localStorage:', e);
+      }
+    }
+    return [];
+  });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Modal window state
+  const [cityToDelete, setCityToDelete] = useState<string | null>(null);
+
+  const [activeCity, setActiveCity] = useState<string | null>(
+    weatherList.length > 0 ? weatherList[0].location.name : null
+  );
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(weatherList));
+  }, [weatherList]);
+
+  const handleSearch = async (city: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    const data = await fetchWeather(city);
+
+    if (data) {
+      setWeatherList((prev) => {
+        const filtered = prev.filter(
+          (item) => 
+            !(
+              item.location.name.toLowerCase() === data.location.name.toLowerCase() &&
+              item.location.country.toLowerCase() === data.location.country.toLowerCase()
+            )
+        );
+        return [data, ...filtered];
+      });
+      setActiveCity(`${data.location.name}-${data.location.country}`);
+    } else {
+      setError('City not found or network error occurred.');
+    }
+
+    setIsLoading(false);
+  };
+
+  // open modal window on click "x"
+  const handleOpenDeleteModal = (cityName: string) => {
+    console.log('Клік спрацював для міста:', cityName); // <--- ДЛЯ ПЕРЕВІРКИ
+    setCityToDelete(cityName);
+  };
+
+  // Acception deleting
+  const handleConfirmDelete = () => {
+    if (cityToDelete) {
+      setWeatherList((prev) => {
+        const updated = prev.filter((item) => item.location.name.toLowerCase() !== cityToDelete.toLowerCase());
+        if (activeCity?.toLowerCase() === cityToDelete.toLowerCase()) {
+          setActiveCity(updated.length > 0 ? updated[0].location.name : null);
+        }
+        return updated;
+      });
+      setCityToDelete(null);
+    }
+  };
+
+  // Canceling
+  const handleCancelDelete = () => {
+    setCityToDelete(null);
+  };
+
+  const lastUpdatedText = weatherList.length > 0 
+    ? weatherList[0].current.last_updated 
+    : 'Never';
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      <Header />
+    
+      <main className="main">
+        <Sidebar 
+          weatherList={weatherList} 
+          activeCity={activeCity} 
+          onSelectCity={(cityName, countryName) => setActiveCity(`${cityName}-${countryName}`)}
+          onSearch={handleSearch}
+          onDeleteCity={handleOpenDeleteModal}
+        />
+        <div className="main-content">
 
-      <div className="ticks"></div>
+          <div className="mobile-search-wrapper">
+            <SearchBox onSearch={handleSearch} />
+          </div>
+          
+          <section className="forecast">
+            <h2 className="forecast__title">Today's Forecast</h2>
+            <span className="forecast__last-updated">Last updated: {lastUpdatedText}</span>
+        
+            {isLoading && <Loader />}
+            {error && <ErrorMessage message={error} />}
+            
+            {!isLoading && weatherList.length === 0 && !error && (
+              <div className="empty-state">
+                <p>No cities added yet. Start by typing a city name in the search box!</p>
+              </div>
+            )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+       <div id="forecast-grid" className="forecast-grid">
+            {weatherList.map((weatherItem) => (
+              <WeatherCard
+                key={`${weatherItem.location.name}-${weatherItem.location.country}`}
+                data={weatherItem}
+                onDelete={() => handleOpenDeleteModal(weatherItem.location.name)}
+              />
+            ))}
+          </div>
+        </section>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </main>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <ConfirmModal
+        isOpen={Boolean(cityToDelete)}
+        cityName={cityToDelete || ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
